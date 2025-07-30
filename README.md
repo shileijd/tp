@@ -1,6 +1,5 @@
-![](https://www.thinkphp.cn/uploads/images/20230630/300c856765af4d8ae758c503185f8739.png)
 
-ThinkPHP 8 CMS管理系统
+YZSZCMS管理系统
 ===============
 
 ## 系统介绍
