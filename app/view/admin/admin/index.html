@@ -1,0 +1,70 @@
+{__NOLAYOUT__}
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>后台登录</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/css/layui.css">
+        <script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script>
+        <style>
+            body {
+                background-color: #f2f2f2;
+            }
+            .login-container {
+                width: 400px;
+                margin: 150px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .captcha-group {
+                display: flex;
+                gap: 10px;
+            }
+            .captcha-group input {
+                flex: 1;
+            }
+            .captcha-group img {
+                height: 38px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <div class="layui-row layui-col-space10">
+                <div class="layui-col-md12" style="text-align: center;">
+                    <h2 style="font-size: 24px;">后台登录</h2>
+                </div>
+            </div>
+            <form class="layui-form" action="index" method="post">
+                <div class="layui-form-item">
+                    <label for="username" class="layui-form-label">账号:</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="username" name="username" required lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="password" class="layui-form-label">密码:</label>
+                    <div class="layui-input-block">
+                        <input type="password" id="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="captcha" class="layui-form-label">验证码:</label>
+                    <div class="layui-input-block">
+                        <div class="captcha-group">
+                            <input type="text" id="captcha" name="captcha" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
+                            <img src="/captcha" alt="验证码" style="cursor: pointer;" onclick="this.src='/captcha.html?' + Math.random();">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="login">登录</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+    </body>
+</html>

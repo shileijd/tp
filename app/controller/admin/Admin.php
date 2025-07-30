@@ -1,0 +1,77 @@
+<?php
+namespace app\controller\admin;
+
+use app\BaseController;
+use think\facade\Captcha;
+use think\facade\Session;
+use think\facade\Request;
+use think\facade\View;
+
+class Admin extends BaseController
+{
+    public function index()
+    {
+        if (Request::isPost()) {
+            $username = Request::param('username');
+            $password = Request::param('password');
+            $captcha = Request::param('captcha');
+            
+            // 验证码验证
+            if (!captcha_check($captcha)) {
+                return json(['code' => 0, 'msg' => '验证码错误']);
+            }
+            
+            // 查询用户信息
+            $user = \think\facade\Db::table('sz_admin_user')
+                ->where('username', $username)
+                ->find();
+            
+            if (!$user) {
+                return json(['code' => 0, 'msg' => '用户不存在']);
+            }
+            
+            // 验证密码（实际应用中应使用password_verify()验证加密密码）
+            if ($user['password'] !== $password) {
+                return json(['code' => 0, 'msg' => '密码错误']);
+            }
+            
+            // 登录成功，保存用户信息到Session
+            Session::set('admin_user', $user['username']);
+            
+            return redirect('dashboard');
+        }
+        
+        return view::fetch();
+    }
+
+    public function dashboard()
+    {
+        $user = Session::get('admin_user');
+        
+        view::assign('user', $user);
+        return view::fetch();
+    }
+
+    public function header()
+    {
+        $user = Session::get('admin_user');
+        view::assign('user', $user);
+        return view::fetch();
+    }
+
+    public function left()
+    {
+        return view::fetch();
+    }
+
+    public function footer()
+    {
+        return view::fetch();
+    }
+
+    public function logout()
+    {
+        Session::clear();
+        return redirect(url('/admin/admin/index'));
+    }
+}
