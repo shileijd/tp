@@ -6,6 +6,7 @@ use think\facade\Captcha;
 use think\facade\Session;
 use think\facade\Request;
 use think\facade\View;
+use think\facade\Db;
 
 class Admin extends BaseController
 {
@@ -22,7 +23,7 @@ class Admin extends BaseController
             }
             
             // 查询用户信息
-            $user = \think\facade\Db::table('sz_admin_user')
+            $user = Db::table('sz_admin_user')
                 ->where('username', $username)
                 ->find();
             
@@ -47,8 +48,11 @@ class Admin extends BaseController
     public function dashboard()
     {
         $user = Session::get('admin_user');
-        
+        $dashboard = Db::table('sz_dashboard_stats')
+            ->where('id', '1')
+            ->find();
         view::assign('user', $user);
+        view::assign('dashboard', $dashboard);
         return view::fetch();
     }
 

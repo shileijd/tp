@@ -2,10 +2,24 @@
             <div class="layui-side-scroll">
                 <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
                 <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                    <li class="layui-nav-item"><a href="">系统配置</a></li>
-                    <li class="layui-nav-item"><a href="">菜单设置</a></li>
-                    <li class="layui-nav-item"><a href="">会员管理</a></li>
-                    <li class="layui-nav-item"><a href="">发布内容</a></li>
+                    <li class="layui-nav-item"><a href="">控制台</a></li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">前端页面设置</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">菜单设置</a></dd>
+                            <dd><a href="javascript:;">内容发布</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">会员管理</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">会员管理</a></dd>
+                            <dd><a href="javascript:;">会员购买记录</a></dd>
+                            <dd><a href="">会员价格设定</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item"><a href="">资源管理</a></li>
+                    <li class="layui-nav-item"><a href="">其它设定</a></li>
                 </ul>
             </div>
         </div>
