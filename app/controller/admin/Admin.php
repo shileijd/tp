@@ -47,19 +47,17 @@ class Admin extends BaseController
 
     public function dashboard()
     {
-        $user = Session::get('admin_user');
         $dashboard = Db::table('sz_dashboard_stats')
             ->where('id', '1')
             ->find();
-        view::assign('user', $user);
         view::assign('dashboard', $dashboard);
         return view::fetch();
     }
 
     public function header()
     {
-        $user = Session::get('admin_user');
-        view::assign('user', $user);
+        $user = $this->getCurrentUser();
+        View::assign('user', $user);
         return view::fetch();
     }
 
@@ -76,6 +74,7 @@ class Admin extends BaseController
     public function logout()
     {
         Session::clear();
-        return redirect(url('/admin/admin/index'));
+        // 使用绝对路径重定向到登录页面，避免路由解析问题
+        return redirect('/admin/admin/index');
     }
 }

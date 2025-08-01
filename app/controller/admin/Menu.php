@@ -16,13 +16,11 @@ class Menu extends BaseController
 
     public function index()
     {
-        
         // 获取所有菜单
         $menus = Db::name('menus')->order('parent_id', 'asc')->order('sort_order', 'asc')->select();
         
         // 构建菜单树
         $menuTree = $this->buildMenuTree($menus);
-        view::assign('user', $user);
 
         return View::fetch('',[
             'menus' => $menuTree

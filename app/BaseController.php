@@ -52,7 +52,43 @@ abstract class BaseController
 
     // 初始化
     protected function initialize()
-    {}
+    {
+        // 白名单路由，不需要登录验证
+        $whitelist = [
+            'admin/admin/index',  // 登录页面
+            'admin.admin/index'   // 登录页面的另一种格式
+        ];
+        
+        // 获取当前路由
+        $controller = strtolower($this->request->controller());
+        $action = strtolower($this->request->action());
+        $route = $controller . '/' . $action;
+        
+        // 如果在白名单中，直接返回，不执行任何认证逻辑
+        if (in_array($route, $whitelist)) {
+            return;
+        }
+        
+        // 检查用户是否已登录
+        if (!$this->getCurrentUser()) {
+            // 未登录则重定向到登录页面
+            header('Location: /admin/admin/index');
+            exit();
+        }
+        
+        // 将用户信息分配到视图变量
+        \think\facade\View::assign('user', $this->getCurrentUser());
+    }
+    
+    /**
+     * 获取当前登录用户
+     * 
+     * @return mixed
+     */
+    protected function getCurrentUser()
+    {
+        return \think\facade\Session::get('admin_user');
+    }
 
     /**
      * 验证数据
