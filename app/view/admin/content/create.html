@@ -1,0 +1,113 @@
+<link rel="stylesheet" href="/static/ueditor/utf8-jsp/themes/default/css/ueditor.css">
+<div class="layui-body" style="padding: 20px;">
+            <div class="layui-card">
+                <div class="layui-card-header">撰写文章</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" id="articleForm" action="" method="post">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属菜单</label>
+                            <div class="layui-input-block">
+                                <select name="menu_id" id="menu_id" lay-verify="required" lay-search="">
+                                    <option value="">请选择菜单</option>
+                                    {foreach $menus as $menu}
+                                    <option value="{$menu.id}">{$menu.name}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">标题</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" id="title" required lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">作者</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="author" id="author" required lay-verify="required" placeholder="请输入作者" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">发布日期</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="date" id="date" required lay-verify="required" placeholder="请选择日期" autocomplete="off" class="layui-input" value="{:date('Y-m-d')}" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">内容</label>
+                            <div class="layui-input-block">
+                                <div id="editor"></div>
+                                <textarea id="content" name="content" style="display:none;"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formDemo">发布文章</button>
+                                <a href="{:url('admin/content/index')}" class="layui-btn layui-btn-primary">返回列表</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+ 
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/ueditor/utf8-jsp/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/ueditor/utf8-jsp/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/static/ueditor/utf8-jsp/lang/zh-cn/zh-cn.js"></script>
+    <script>
+        layui.use(['form', 'layer', 'laydate'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            var laydate = layui.laydate;
+            
+            // 初始化富文本编辑器
+            var editor = UE.getEditor('editor');
+            // 监听编辑器内容变化
+            editor.ready(function() {
+                editor.addListener('contentChange', function() {
+                    document.getElementById('content').value = editor.getContent();
+                });
+            });
+            
+            // 日期控件
+            laydate.render({
+                elem: '#date',
+                theme: '#448aff'
+            });
+            
+            // 表单提交
+            form.on('submit(formDemo)', function(data){
+                // 获取编辑器内容
+                const content = editor.txt.html();
+                $('#content').val(content);
+                
+                // 提交表单
+                $.ajax({
+                    url: '{:url("admin/content/save")}',
+                    type: 'POST',
+                    data: $('#articleForm').serialize(),
+                    success: function(res) {
+                        if (res.code === 1) {
+                            layer.msg(res.msg, {icon: 1}, function(){
+                                location.href = '{:url("admin/content/index")}' ;
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    }
+                });
+                
+                return false;
+            });
+        });
+    </script>
+

@@ -1,0 +1,117 @@
+
+<div class="layui-body" style="padding: 20px;">
+
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <h3 class="layui-card-title">文章管理</h3>
+                    
+                </div>
+                    <div class="layui-card-tool">
+                        <a href="{:url('admin/content/create')}" class="layui-btn layui-btn-sm layui-btn-primary">撰写文章</a>
+                    </div>
+                <div class="layui-card-body">
+                    <table class="layui-table" lay-even lay-skin="row">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>标题</th>
+                                <th>作者</th>
+                                <th>所属菜单</th>
+                                <th>日期</th>
+                                <th>阅读量</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {foreach $news as $item}
+                            <tr>
+                                <td>{$item.id}</td>
+                                <td>{$item.title}</td>
+                                <td>{$item.author}</td>
+                                <td>{$item.menu_id}</td>
+                                <td>{$item.date}</td>
+                                <td>{$item.views}</td>
+                                <td>
+                                    <a href="{:url('admin/content/edit', ['id' => $item.id])}" class="layui-btn layui-btn-sm layui-btn-warm">编辑</a>
+                                    <a href="javascript:void(0);" onclick="deleteArticle('{$item.id}')" class="layui-btn layui-btn-sm layui-btn-danger">删除</a>
+                                </td>
+                            </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                    
+                    <div id="pagination" style="text-align: center;"></div>
+                
+                <!-- 后端传递的分页数据 -->
+                <script id="pagination-data" type="application/json">
+                    {
+                        "total": "{$news ? $news->total() : 0}",
+                        "listRows": "{$news ? $news->listRows() : 10}",
+                        "currentPage": "{$news ? $news->currentPage() : 1}"
+                    }
+                </script>
+                </div>
+            </div>
+        </div>
+        
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script>
+    <script>
+        // 定义分页相关变量
+        var newsTotal = 0;
+        var newsListRows = 10;
+        var newsCurrentPage = 1;
+        
+        // 从页面中读取后端传递的分页数据
+        var paginationDataElement = document.getElementById('pagination-data');
+        if (paginationDataElement) {
+            try {
+                var paginationData = JSON.parse(paginationDataElement.textContent);
+                newsTotal = parseInt(paginationData.total) || 0;
+                newsListRows = parseInt(paginationData.listRows) || 10;
+                newsCurrentPage = parseInt(paginationData.currentPage) || 1;
+            } catch (e) {
+                console.error('解析分页数据时出错:', e);
+            }
+        }
+        
+        layui.use(['laypage', 'layer'], function(){
+            var laypage = layui.laypage;
+            var layer = layui.layer;
+            
+            // 分页
+            laypage.render({
+                elem: 'pagination',
+                count: typeof newsTotal !== 'undefined' ? newsTotal : 0,
+                limit: typeof newsListRows !== 'undefined' ? newsListRows : 10,
+                curr: typeof newsCurrentPage !== 'undefined' ? newsCurrentPage : 1,
+                jump: function(obj, first){
+                    if(!first){
+                        location.href = '{:url("admin/content/index", ["page" => "__PAGE__"])}'.replace('__PAGE__', obj.curr);
+                    }
+                }
+            });
+        });
+        
+        function deleteArticle(id) {
+            layer.confirm('确定要删除这篇文章吗？', {
+                btn: ['确定','取消']
+            }, function(){
+                $.ajax({
+                    url: '{:url("admin/content/delete", ["id" => "__ID__"])}'.replace('__ID__', id),
+                    type: 'POST',
+                    success: function(res) {
+                        if (res.code === 1) {
+                            layer.msg(res.msg, {icon: 1}, function(){
+                                location.reload();
+                            });
+                        } else {
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    }
+                });
+            });
+        }
+    </script>
