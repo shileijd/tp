@@ -1,0 +1,33 @@
+<div class="layui-card" style="padding: 20px;">
+    <div class="layui-card-header">会员购买记录</div>
+    <div class="layui-card-body">
+        <table class="layui-table" lay-even lay-skin="row">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>会员等级</th>
+                    <th>购买时间</th>
+                    <th>可创建视频数</th>
+                    <th>购买金额</th>
+                </tr>
+            </thead>
+            <tbody>
+                {volist name="records" id="record"}
+                <tr>
+                    <td>{$record.id}</td>
+                    <td>{$record.username}</td>
+                    <td>{$record.vip_level}</td>
+                    <td>{$record.purchase_time|date='Y-m-d H:i:s'}</td>
+                    <td>{$record.video_limit}</td>
+                    <td>{$record.amount}</td>
+                </tr>
+                {/volist}
+            </tbody>
+        </table>
+        <div>
+            {$records|raw}
+        </div>
+    </div>
+</div>
+

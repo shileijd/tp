@@ -1,0 +1,94 @@
+<div class="layui-card" style="padding: 20px;">
+            <div class="layui-card-header">{if $pricing.id}编辑会员价格{else/}新增会员价格{/if}</div>
+            <div class="layui-card-body">
+                <form class="layui-form" action="{:url('admin/members/savePricing')}" method="post" lay-filter="pricingForm">
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="levelName">等级名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="levelName" name="level_name" required lay-verify="required" placeholder="请输入等级名称" class="layui-input" autocomplete="off" value="{$pricing.level_name|default=''}">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="level">等级</label>
+                        <div class="layui-input-block">
+                            <input type="number" id="level" name="level" required lay-verify="required|number" placeholder="请输入等级" class="layui-input" autocomplete="off" value="{$pricing.level|default=''}">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="price">价格</label>
+                        <div class="layui-input-block">
+                            <input type="number" id="price" name="price" step="0.01" required lay-verify="required|number" placeholder="请输入价格" class="layui-input" autocomplete="off" value="{$pricing.price|default=''}">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="videoLimit">可创建视频数</label>
+                        <div class="layui-input-block">
+                            <input type="number" id="videoLimit" name="video_limit" value="{$pricing.video_limit|default='0'}" placeholder="请输入可创建视频数" class="layui-input" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="tokenAmount">赠送点数</label>
+                        <div class="layui-input-block">
+                            <input type="number" id="tokenAmount" name="token_amount" value="{$pricing.token_amount|default='0'}" placeholder="请输入赠送点数" class="layui-input" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="duration">会员时长(天)</label>
+                        <div class="layui-input-block">
+                            <input type="number" id="duration" name="duration" required lay-verify="required|number" placeholder="请输入会员时长" class="layui-input" autocomplete="off" value="{$pricing.duration|default=''}">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="description">会员详情</label>
+                        <div class="layui-input-block">
+                            <textarea id="description" name="description" placeholder="请输入会员详情" class="layui-textarea">{$pricing.description|default=''}</textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="sort">排序</label>
+                        <div class="layui-input-block">
+                            <input type="number" id="sort" name="sort" value="{$pricing.sort|default='0'}" placeholder="请输入排序" class="layui-input" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="savePricing">保存</button>
+                            <a href="{:url('admin/members/pricing')}" class="layui-btn layui-btn-primary">返回</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+<script>
+layui.use(['form', 'jquery'], function() {
+    var form = layui.form;
+    var $ = layui.jquery;
+    
+    // 表单提交
+    form.on('submit(savePricing)', function(data) {
+        $.ajax({
+            url: data.form.action,
+            type: 'POST',
+            data: data.field,
+            success: function(res) {
+                if (res.code == 1) {
+                    layer.msg('保存成功', {icon: 1}, function() {
+                        location.href = '{:url("admin/members/pricing")}';
+                    });
+                } else {
+                    layer.msg('保存失败：' + res.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.msg('网络错误', {icon: 2});
+            }
+        });
+        
+        return false;
+    });
+});
+</script>

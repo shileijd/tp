@@ -1,0 +1,118 @@
+<div class="layui-card" style="padding: 20px;">
+    <div class="layui-card-header">
+        会员价格设定
+        <a href="{:url('admin/members/editPricing')}" class="layui-btn layui-btn-sm layui-btn-normal">新增价格</a>
+    </div>
+    <div class="layui-card-body">
+        <table class="layui-table" lay-even lay-skin="row">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>等级名称</th>
+                    <th>等级</th>
+                    <th>价格</th>
+                    <th>可创建视频数</th>
+                    <th>赠送点数</th>
+                    <th>会员时长(天)</th>
+                    <th>状态</th>
+                    <th>排序</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {volist name="pricings" id="pricing"}
+                <tr>
+                    <td>{$pricing.id}</td>
+                    <td>{$pricing.level_name}</td>
+                    <td>{$pricing.level}</td>
+                    <td>{$pricing.price}</td>
+                    <td>{$pricing.video_limit}</td>
+                    <td>{$pricing.token_amount}</td>
+                    <td>{$pricing.duration}</td>
+                    <td>
+                        {if $pricing.status == 1}
+                            <span class="layui-badge layui-bg-green">启用</span>
+                        {else/}
+                            <span class="layui-badge">禁用</span>
+                        {/if}
+                    </td>
+                    <td>{$pricing.sort}</td>
+                    <td>
+                        <a href="{:url('admin/members/editPricing', ['id' => $pricing.id])}" class="layui-btn layui-btn-sm layui-btn-primary">编辑</a>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger delete-pricing" data-id="{$pricing.id}">删除</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-warm toggle-status" data-id="{$pricing.id}" data-status="{$pricing.status}">
+                            {if $pricing.status == 1}禁用{else/}启用{/if}
+                        </button>
+                    </td>
+                </tr>
+                {/volist}
+            </tbody>
+        </table>
+        <div>
+            {$pricings|raw}
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+layui.use(['jquery', 'layer'], function() {
+    var $ = layui.jquery;
+    var layer = layui.layer;
+    
+    // 删除价格设定
+    $('.delete-pricing').click(function() {
+        var id = $(this).data('id');
+        layer.confirm('确定要删除该价格设定吗？', {
+            icon: 3,
+            title: '提示'
+        }, function(index) {
+            $.ajax({
+                url: '{:url("admin/members/deletePricing")}',
+                type: 'POST',
+                data: {id: id},
+                success: function(res) {
+                    if (res.code == 1) {
+                        layer.msg('删除成功', {icon: 1}, function() {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg('删除失败：' + res.msg, {icon: 2});
+                    }
+                },
+                error: function() {
+                    layer.msg('网络错误', {icon: 2});
+                }
+            });
+            layer.close(index);
+        });
+    });
+    
+    // 切换状态
+    $('.toggle-status').click(function() {
+        var id = $(this).data('id');
+        var status = $(this).data('status');
+        
+        $.ajax({
+            url: '{:url("admin/members.togglePricingStatus")}',
+            type: 'POST',
+            data: {id: id},
+            success: function(res) {
+                if (res.code == 1) {
+                    layer.msg('操作成功', {icon: 1}, function() {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg('操作失败：' + res.msg, {icon: 2});
+                }
+            },
+            error: function() {
+                layer.msg('网络错误', {icon: 2});
+            }
+        });
+    });
+});
+</script>
+
+

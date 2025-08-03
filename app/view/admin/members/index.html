@@ -1,0 +1,72 @@
+<div class="layui-card" style="padding: 20px;">
+    <div class="layui-card-header">用户管理</div>
+    <div class="layui-card-body">
+        <table class="layui-table" lay-even lay-skin="row">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>VIP等级</th>
+                    <th>会员点数</th>
+                    <th>到期时间</th>
+                    <th>注册时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {volist name="users" id="user"}
+                <tr>
+                    <td>{$user.id}</td>
+                    <td>{$user.username}</td>
+                    <td>{$user.email}</td>
+                    <td>{$user.vip_level}</td>
+                    <td>{$user.tokens}</td>
+                    <td>{$user.vip_expire_time|default='-'}</td>
+                    <td>{$user.create_time|date='Y-m-d H:i:s'}</td>
+                    <td>
+                        <button type="button" class="layui-btn layui-btn-danger layui-btn-xs delete-user" data-id="{$user.id}">删除</button>
+                    </td>
+                </tr>
+                {/volist}
+            </tbody>
+        </table>
+        <div>
+            {$users|raw}
+        </div>
+    </div>
+</div>
+<script>
+layui.use(['jquery', 'layer'], function(){
+    var $ = layui.jquery;
+    var layer = layui.layer;
+    
+    // 删除用户
+    $(document).on('click', '.delete-user', function() {
+        var id = $(this).data('id');
+        layer.confirm('确定要删除该用户吗？', {
+            title: '提示',
+            icon: 3
+        }, function(index) {
+            $.ajax({
+                url: '{:url("admin/members/delete")}',
+                type: 'POST',
+                data: {id: id},
+                success: function(res) {
+                    if (res.code == 1) {
+                        layer.msg('删除成功', {icon: 1}, function() {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg('删除失败：' + res.msg, {icon: 2});
+                    }
+                },
+                error: function() {
+                    layer.msg('网络错误', {icon: 2});
+                }
+            });
+            layer.close(index);
+        });
+    });
+});
+</script>
