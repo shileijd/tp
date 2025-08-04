@@ -1,0 +1,206 @@
+{__NOLAYOUT__}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>首页</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/css/layui.css">
+  <script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script>
+  <style>
+    /* 自定义样式 */
+    body {
+      overflow: hidden;
+    }
+    
+    .header {
+      height: 50px;
+      background-color: #393D49;
+      color: white;
+      line-height: 50px;
+      padding: 0 15px;
+    }
+    
+    .logo {
+      font-size: 18px;
+      font-weight: bold;
+      display: inline-block;
+    }
+    
+    .main-container {
+      height: calc(100vh - 50px);
+    }
+    
+    .sidebar {
+      width: auto;
+      background-color: #f2f2f2;
+      height: 100%;
+      overflow-y: auto;
+      min-width: 150px;
+    }
+    
+    .content {
+      padding: 15px;
+      height: 100%;
+      overflow-y: auto;
+    }
+    
+    /* 修复layui导航菜单样式 */
+    .layui-nav {
+      background: transparent;
+      padding: 0;
+    }
+    
+    .layui-nav .layui-nav-item {
+      line-height: 50px;
+    }
+    
+    .layui-nav .layui-nav-item a {
+      color: #fff;
+    }
+    
+    .layui-nav .layui-this:after, 
+    .layui-nav .layui-nav-item a:hover {
+      color: #fff;
+    }
+    
+    /* 模式切换按钮样式 */
+    #theme-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* 登录按钮样式 */
+    .layui-btn-normal {
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <div class="header">
+    <div class="layui-row">
+      <div class="layui-col-md4">
+        <div class="logo">LOGO</div>
+      </div>
+      <div class="layui-col-md4">
+        <ul class="layui-nav" lay-filter="">
+          <li class="layui-nav-item layui-this"><a href="">首页</a></li>
+          <li class="layui-nav-item"><a href="">关于我们</a></li>
+          <li class="layui-nav-item"><a href="">服务</a></li>
+          <li class="layui-nav-item"><a href="">联系方式</a></li>
+        </ul>
+      </div>
+      <div class="layui-col-md4" style="text-align: right;">
+        <!-- 模式切换按钮 -->
+        <div class="layui-inline" style="margin-right: 10px; position: relative;">
+          <button class="layui-btn layui-btn-primary" id="theme-btn">
+            <i class="layui-icon layui-icon-theme" style="font-size: 16px;"></i>
+          </button>
+          <ul class="layui-nav-child" id="theme-menu" style="display: none; position: absolute; right: 0; top: 35px; z-index: 999; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.12);">
+            <li><a href="javascript:;" data-theme="light">亮色模式</a></li>
+            <li><a href="javascript:;" data-theme="dark">暗黑模式</a></li>
+            <li><a href="javascript:;" data-theme="auto">跟随系统</a></li>
+          </ul>
+        </div>
+        <button class="layui-btn layui-btn-normal">登录</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 主体内容 -->
+  <div class="layui-row main-container">
+    <!-- 左侧菜单 -->
+    <div class="layui-col-md1 sidebar">
+      <ul class="layui-nav layui-nav-tree" lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">菜单1</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">选项1</a></dd>
+            <dd><a href="javascript:;">选项2</a></dd>
+            <dd><a href="javascript:;">选项3</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">菜单2</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">选项4</a></dd>
+            <dd><a href="javascript:;">选项5</a></dd>
+            <dd><a href="javascript:;">选项6</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">菜单3</a>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">菜单4</a>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- 右侧内容 -->
+    <div class="layui-col-md11 content">
+      <div class="layui-card">
+        <div class="layui-card-header">欢迎</div>
+        <div class="layui-card-body">
+          <p>这是主要内容区域</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+  layui.config({
+    base: ''
+  }).use(['jquery', 'element', 'layer'], function(){
+    var $ = layui.jquery;
+    var element = layui.element;
+    var layer = layui.layer;
+    
+    // 初始化导航菜单
+    element.render('nav');
+    
+    // 导航菜单点击事件
+    element.on('nav(test)', function(elem){
+      console.log(elem);
+      // 防止默认跳转
+      return false;
+    });
+    
+    // 登录按钮点击事件
+    $('.layui-btn-normal').on('click', function() {
+      layer.msg('登录功能待实现');
+    });
+    
+    // 模式切换按钮事件
+    $('#theme-btn').on('click', function(e) {
+      e.stopPropagation();
+      $('#theme-menu').toggle();
+    });
+    
+    // 点击其他地方隐藏菜单
+    $(document).on('click', function() {
+      $('#theme-menu').hide();
+    });
+    
+    // 阻止菜单点击事件冒泡
+    $('#theme-menu').on('click', function(e) {
+      e.stopPropagation();
+    });
+    
+    // 主题切换功能
+    $('#theme-menu a').on('click', function() {
+      var theme = $(this).data('theme');
+      console.log('切换到主题:', theme);
+      $('#theme-menu').hide();
+      // 这里可以添加实际的主题切换逻辑
+    });
+  });
+  </script>
+</body>
+</html>

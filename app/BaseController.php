@@ -56,7 +56,9 @@ abstract class BaseController
         // 白名单路由，不需要登录验证
         $whitelist = [
             'admin/admin/index',  // 登录页面
-            'admin.admin/index'   // 登录页面的另一种格式
+            'admin.admin/index',   // 登录页面的另一种格式
+            'index/index/index',
+            'index.index/index',
         ];
         
         // 获取当前路由
@@ -72,7 +74,7 @@ abstract class BaseController
         // 检查用户是否已登录
         if (!$this->getCurrentUser()) {
             // 未登录则重定向到登录页面
-            header('Location: /admin/admin/index');
+            header('Location: /index');
             exit();
         }
         
