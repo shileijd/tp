@@ -4,80 +4,396 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>首页</title>
+  <title>山竹AI - 让你的文稿变成大片</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/css/layui.css">
   <script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script>
   <style>
-    /* 自定义样式 */
-    body {
-      overflow: hidden;
+    /* 功能卡片区域样式 */
+    .feature-cards {
+      margin-top: 60px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      padding: 0 20px;
     }
     
-    .header {
+    .feature-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      width: 22%;
+      transition: all 0.3s;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .feature-card:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .feature-icon {
+      width: 50px;
       height: 50px;
-      background-color: #393D49;
-      color: white;
-      line-height: 50px;
-      padding: 0 15px;
-    }
-    
-    .logo {
-      font-size: 18px;
-      font-weight: bold;
-      display: inline-block;
-    }
-    
-    .main-container {
-      height: calc(100vh - 50px);
-    }
-    
-    .sidebar {
-      width: auto;
-      background-color: #f2f2f2;
-      height: 100%;
-      overflow-y: auto;
-      min-width: 150px;
-    }
-    
-    .content {
-      padding: 15px;
-      height: 100%;
-      overflow-y: auto;
-    }
-    
-    /* 修复layui导航菜单样式 */
-    .layui-nav {
-      background: transparent;
-      padding: 0;
-    }
-    
-    .layui-nav .layui-nav-item {
-      line-height: 50px;
-    }
-    
-    .layui-nav .layui-nav-item a {
-      color: #fff;
-    }
-    
-    .layui-nav .layui-this:after, 
-    .layui-nav .layui-nav-item a:hover {
-      color: #fff;
-    }
-    
-    /* 模式切换按钮样式 */
-    #theme-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      padding: 0;
+      background: #f0f0f0;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 15px;
     }
     
-    /* 登录按钮样式 */
-    .layui-btn-normal {
+    .feature-icon i {
+      font-size: 24px;
+      color: #fff;
+    }
+    
+    .feature-icon.blue {
+      background: #4a90e2;
+    }
+    
+    .feature-icon.green {
+      background: #50c878;
+    }
+    
+    .feature-icon.orange {
+      background: #ff7f50;
+    }
+    
+    .feature-content h3 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .feature-content p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    /* 全局样式 */
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: #f8f8f8;
+      color: #333;
+      min-height: 100vh;
+    }
+    
+    /* 顶部导航栏 */
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 20px;
+    }
+    
+    .logo {
+      height: 60px;
+      line-height: 60px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo img {
+      height: 30px;
+      margin-right: 5px;
+    }
+    
+    /* 导航菜单 */
+    .nav-menu {
+      background-color: transparent;
+      height: 60px;
+      line-height: 60px;
+    }
+    
+    .nav-menu .layui-nav-item a {
+      color: #333;
+      font-size: 15px;
+    }
+    
+    .nav-menu .layui-this a {
+      color: #ff6699 !important;
+    }
+    
+    .nav-menu .layui-nav-item a:hover {
+      color: #ff6699;
+    }
+    
+    .nav-menu .layui-this:after {
+      background-color: #ff6699;
+    }
+    
+    /* 右侧用户区域 */
+    .user-area {
+      height: 60px;
+      line-height: 60px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    
+    .theme-switch {
+      margin-right: 15px;
+      cursor: pointer;
+      font-size: 20px;
+      color: #666;
+    }
+    
+    .login-btn {
+      background-color: #fff;
+      color: #333;
+      border: 1px solid #e6e6e6;
+      border-radius: 20px;
+      padding: 0 20px;
+      height: 36px;
+      line-height: 36px;
+    }
+    
+    /* 左侧菜单 */
+    .sidebar {
+      width: 220px;
+      background-color: #f8f8f8;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      padding-top: 20px;
+      z-index: 900;
+      border-right: 1px solid #eee;
+    }
+    
+    .sidebar-menu {
+      border-right: none;
+      background-color: transparent;
+    }
+    
+    .sidebar-menu .layui-nav-item {
+      line-height: 50px;
+    }
+    
+    .sidebar-menu .layui-nav-item a {
+      color: #555;
+      padding-left: 25px;
+      font-size: 14px;
+    }
+    
+    .sidebar-menu .layui-nav-item a:hover {
+      color: #ff6699;
+      background-color: #f0f0f0;
+    }
+    
+    /* 覆盖Layui默认的导航菜单选中样式 */
+    .layui-nav-tree .layui-nav-child dd.layui-this, 
+    .layui-nav-tree .layui-nav-child dd.layui-this a, 
+    .layui-nav-tree .layui-this, 
+    .layui-nav-tree .layui-this>a, 
+    .layui-nav-tree .layui-this>a:hover {
+      background-color: #f8f8f8;
+      color: #ff6699;
+    }
+    
+    .sidebar-menu .layui-this a {
+      color: #ff6699 !important;
+      background-color: transparent;
+    }
+    
+    .sidebar-menu .layui-this:after {
+      display: none;
+    }
+    
+    .sidebar-menu .layui-nav-item a i {
+      margin-right: 10px;
+    }
+    
+    /* 主内容区域 */
+    .main-content {
+      margin-left: 220px;
+      margin-top: 140px;
+      padding: 20px;
+    }
+    
+    /* 标题区域 */
+    .title-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .title-section h1 {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    
+    .title-section h1 .highlight {
+      color: #ff6699;
+    }
+    
+    /* 搜索框 */
+    .search-box {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      height: 40px;
+      border: none;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      padding: 0 15px;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .search-input:focus {
+      outline: none;
+    }
+    
+    /* 推荐标签 */
+    .tags-section {
+      max-width: 800px;
+      margin: 0 auto 30px;
+      text-align: center;
+    }
+    
+    .tags-section .tag {
+      display: inline-block;
+      background-color: #fff;
+      border-radius: 16px;
+      padding: 5px 15px;
+      margin: 5px;
+      font-size: 13px;
+      color: #666;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .tags-section .tag:hover {
+      color: #ff6699;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    /* 创建按钮 */
+    .create-btn {
+      background-color: #000;
+      color: #fff;
+      border-radius: 20px;
+      padding: 0 25px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 14px;
+      margin-top: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .create-btn i {
+      margin-right: 5px;
+    }
+    
+    /* 选项卡 */
+    .tab-section {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .layui-tab-title {
+      border-bottom: none;
+    }
+    
+    .layui-tab-title li {
+      font-size: 16px;
+      color: #666;
+    }
+    
+    .layui-tab-title .layui-this {
+      color: #333;
+    }
+    
+    .layui-tab-title .layui-this:after {
+      border-bottom: 2px solid #ff6699;
+    }
+  </style>
+  
+  <!-- 左侧菜单底部样式 -->
+  <style>
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      padding: 15px;
+    }
+    
+    .app-card {
+      background-color: #302232;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    
+    .app-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #ff6699;
+      margin-bottom: 5px;
+    }
+    
+    .app-desc {
+      font-size: 12px;
+      color: #ccc;
+    }
+    
+    .api-btn {
+      background-color: #9c9898;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
       border-radius: 6px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .api-btn:hover {
+      background-color: #444;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .footer-links a {
+      color: #666;
+      font-size: 16px;
+    }
+    
+    .footer-links a:hover {
+      color: #ff6699;
+    }
+    
+    .footer-text {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+    }
+    
+    .footer-text a {
+      color: #999;
+      text-decoration: none;
+    }
+    
+    .footer-text a:hover {
+      color: #ff6699;
     }
   </style>
 </head>
@@ -85,79 +401,127 @@
   <!-- 顶部导航栏 -->
   <div class="header">
     <div class="layui-row">
-      <div class="layui-col-md4">
-        <div class="logo">LOGO</div>
-      </div>
-      <div class="layui-col-md4">
-        <ul class="layui-nav" lay-filter="">
-          <li class="layui-nav-item layui-this"><a href="">首页</a></li>
-          <li class="layui-nav-item"><a href="">关于我们</a></li>
-          <li class="layui-nav-item"><a href="">服务</a></li>
-          <li class="layui-nav-item"><a href="">联系方式</a></li>
-        </ul>
-      </div>
-      <div class="layui-col-md4" style="text-align: right;">
-        <!-- 模式切换按钮 -->
-        <div class="layui-inline" style="margin-right: 10px; position: relative;">
-          <button class="layui-btn layui-btn-primary" id="theme-btn">
-            <i class="layui-icon layui-icon-theme" style="font-size: 16px;"></i>
-          </button>
-          <ul class="layui-nav-child" id="theme-menu" style="display: none; position: absolute; right: 0; top: 35px; z-index: 999; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.12);">
-            <li><a href="javascript:;" data-theme="light">亮色模式</a></li>
-            <li><a href="javascript:;" data-theme="dark">暗黑模式</a></li>
-            <li><a href="javascript:;" data-theme="auto">跟随系统</a></li>
-          </ul>
+      <div class="layui-col-md6">
+        <div class="logo">
+          山竹AI
         </div>
-        <button class="layui-btn layui-btn-normal">登录</button>
+      </div>
+     
+      <div class="layui-col-md6 user-area">
+        <div class="theme-switch">
+          <i class="layui-icon layui-icon-theme"></i>
+        </div>
+        <button class="layui-btn login-btn">登录</button>
       </div>
     </div>
   </div>
   
-  <!-- 主体内容 -->
-  <div class="layui-row main-container">
-    <!-- 左侧菜单 -->
-    <div class="layui-col-md1 sidebar">
-      <ul class="layui-nav layui-nav-tree" lay-filter="test">
-        <li class="layui-nav-item layui-nav-itemed">
-          <a class="" href="javascript:;">菜单1</a>
-          <dl class="layui-nav-child">
-            <dd><a href="javascript:;">选项1</a></dd>
-            <dd><a href="javascript:;">选项2</a></dd>
-            <dd><a href="javascript:;">选项3</a></dd>
-          </dl>
-        </li>
-        <li class="layui-nav-item">
-          <a href="javascript:;">菜单2</a>
-          <dl class="layui-nav-child">
-            <dd><a href="javascript:;">选项4</a></dd>
-            <dd><a href="javascript:;">选项5</a></dd>
-            <dd><a href="javascript:;">选项6</a></dd>
-          </dl>
-        </li>
-        <li class="layui-nav-item">
-          <a href="javascript:;">菜单3</a>
-        </li>
-        <li class="layui-nav-item">
-          <a href="javascript:;">菜单4</a>
-        </li>
-      </ul>
+  <!-- 左侧菜单 -->
+  <div class="sidebar">
+    <ul class="layui-nav layui-nav-tree sidebar-menu" lay-filter="sidebar">
+      <li class="layui-nav-item layui-this">
+        <a href="javascript:;"><i class="layui-icon layui-icon-find-fill"></i>发现</a>
+      </li>
+      <li class="layui-nav-item">
+        <a href="javascript:;"><i class="layui-icon layui-icon-user"></i>会员</a>
+      </li>
+      <li class="layui-nav-item">
+        <a href="javascript:;"><i class="layui-icon layui-icon-app"></i>AI 创作</a>
+      </li>
+      <li class="layui-nav-item">
+        <a href="javascript:;"><i class="layui-icon layui-icon-video"></i>视频</a>
+      </li>
+      <li class="layui-nav-item">
+        <a href="javascript:;"><i class="layui-icon layui-icon-picture"></i>图片</a>
+      </li>
+      <li class="layui-nav-item">
+        <a href="javascript:;"><i class="layui-icon layui-icon-template"></i>资产</a>
+      </li>
+      <li class="layui-nav-item">
+        <a href="javascript:;"><i class="layui-icon layui-icon-release"></i>已发布</a>
+      </li>
+    </ul>
+    
+    <!-- 左侧菜单底部内容 -->
+    <div class="sidebar-footer">
+      <div class="app-card">
+        <div class="app-title">山竹AI App</div>
+        <div class="app-desc">正式上线，快先体验</div>
+      </div>
+      <div class="api-btn">申请API</div>
+      <div class="footer-links">
+        <a href="javascript:;"><i class="layui-icon layui-icon-dialogue"></i></a>
+        <a href="javascript:;"><i class="layui-icon layui-icon-refresh"></i></a>
+        <a href="javascript:;"><i class="layui-icon layui-icon-share"></i></a>
+        <a href="javascript:;"><i class="layui-icon layui-icon-music"></i></a>
+        <a href="javascript:;"><i class="layui-icon layui-icon-chart"></i></a>
+       
+      </div>
+      <div class="footer-text">
+        <a href="javascript:;">服务协议</a> · 
+        <a href="javascript:;">隐私信息</a> · 
+        <a href="javascript:;">相关信息</a> · 
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- 主内容区域 -->
+  <div class="main-content">
+    <!-- 标题区域 -->
+    <div class="title-section">
+      <h1>让你的<span class="highlight">文稿</span>变成<span class="highlight">大片</span></h1>
+      
+      <!-- 搜索框 -->
+      <div class="search-box">
+        <textarea name="" placeholder="例如：戴着太阳镜的毛茸茸的熊猫在日出时的雪山顶上跳舞，左移运镜" class="layui-textarea"></textarea>
+        
+      </div>
+      
+      <!-- 创建按钮 -->
+      <div style="text-align: center;">
+        <button class="layui-btn create-btn">
+          <i class="layui-icon layui-icon-add-1"></i>创作视频
+        </button>
+      </div>
     </div>
     
-    <!-- 右侧内容 -->
-    <div class="layui-col-md11 content">
-      <div class="layui-card">
-        <div class="layui-card-header">欢迎</div>
-        <div class="layui-card-body">
-          <p>这是主要内容区域</p>
+    <!-- 功能卡片区域 -->
+    <div class="feature-cards">
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <i class="layui-icon layui-icon-dialogue"></i>
+        </div>
+        <div class="feature-content">
+          <h3>语义分析</h3>
+          <p>自动将文本拆分为多段字幕，并且对每段字幕进行提取分析，产生对应关键词。</p>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <i class="layui-icon layui-icon-picture"></i>
+        </div>
+        <div class="feature-content">
+          <h3>插画生成</h3>
+          <p>根据每段字幕产生的关键词和选定的画风，智能匹配模型生成系列插画</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon orange">
+          <i class="layui-icon layui-icon-sound"></i>
+        </div>
+        <div class="feature-content">
+          <h3>视频导出</h3>
+          <p>根据预设好的视频模板，一键生成成品视频素材自动整合生成视频，全网分享传播</p>
         </div>
       </div>
     </div>
   </div>
   
   <script>
-  layui.config({
-    base: ''
-  }).use(['jquery', 'element', 'layer'], function(){
+  layui.use(['jquery', 'element', 'layer'], function(){
     var $ = layui.jquery;
     var element = layui.element;
     var layer = layui.layer;
@@ -165,40 +529,25 @@
     // 初始化导航菜单
     element.render('nav');
     
-    // 导航菜单点击事件
-    element.on('nav(test)', function(elem){
-      console.log(elem);
-      // 防止默认跳转
-      return false;
-    });
-    
     // 登录按钮点击事件
-    $('.layui-btn-normal').on('click', function() {
+    $('.login-btn').on('click', function() {
       layer.msg('登录功能待实现');
     });
     
-    // 模式切换按钮事件
-    $('#theme-btn').on('click', function(e) {
-      e.stopPropagation();
-      $('#theme-menu').toggle();
+    // 创建按钮点击事件
+    $('.create-btn').on('click', function() {
+      layer.msg('创作视频功能待实现');
     });
     
-    // 点击其他地方隐藏菜单
-    $(document).on('click', function() {
-      $('#theme-menu').hide();
+    // 主题切换按钮事件
+    $('.theme-switch').on('click', function() {
+      layer.msg('主题切换功能待实现');
     });
     
-    // 阻止菜单点击事件冒泡
-    $('#theme-menu').on('click', function(e) {
-      e.stopPropagation();
-    });
-    
-    // 主题切换功能
-    $('#theme-menu a').on('click', function() {
-      var theme = $(this).data('theme');
-      console.log('切换到主题:', theme);
-      $('#theme-menu').hide();
-      // 这里可以添加实际的主题切换逻辑
+    // 标签点击事件
+    $('.tag').on('click', function() {
+      var text = $(this).text();
+      $('.search-input').val(text);
     });
   });
   </script>
