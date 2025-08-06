@@ -75,6 +75,6 @@ class Admin extends BaseController
     {
         Session::clear();
         // 使用绝对路径重定向到登录页面，避免路由解析问题
-        return redirect('/admin/admin/index');
+        return redirect('/index');
     }
 }

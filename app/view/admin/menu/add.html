@@ -1,90 +1,100 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>添加菜单</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container-fluid p-4">
-        <div class="row">
-            <div class="col-md-12">
-                <h4 class="mb-4">添加菜单</h4>
-                <div class="card">
-                    <div class="card-body">
-                        <form id="menu-form">
-                            <div class="form-group">
-                                <label for="parent_id">父级菜单</label>
-                                <select class="form-control" id="parent_id" name="parent_id">
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">添加菜单</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" id="menu-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">父级菜单</label>
+                            <div class="layui-input-block">
+                                <select name="parent_id" lay-filter="parent_id">
                                     <option value="0">作为顶级菜单</option>
                                     {foreach $topMenus as $menu}
                                     <option value="{$menu.id}">{$menu.name}</option>
                                     {/foreach}
                                 </select>
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="name">菜单名称</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">菜单名称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="name" required lay-verify="required" placeholder="请输入菜单名称" autocomplete="off" class="layui-input">
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="url">菜单URL</label>
-                                <input type="text" class="form-control" id="url" name="url">
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">菜单URL</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="url" placeholder="请输入菜单URL" autocomplete="off" class="layui-input">
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="icon">菜单图标</label>
-                                <input type="text" class="form-control" id="icon" name="icon" placeholder="例如: fa fa-home">
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">菜单图标</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="icon" placeholder="例如: fa fa-home" autocomplete="off" class="layui-input">
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="sort_order">排序</label>
-                                <input type="number" class="form-control" id="sort_order" name="sort_order" value="0">
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">排序</label>
+                            <div class="layui-input-block">
+                                <input type="number" name="sort_order" value="0" placeholder="请输入排序数字" autocomplete="off" class="layui-input">
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="status">状态</label>
-                                <select class="form-control" id="status" name="status">
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-block">
+                                <select name="status">
                                     <option value="1">显示</option>
                                     <option value="0">隐藏</option>
                                 </select>
                             </div>
-                            
-                            <button type="submit" class="btn btn-primary">保存</button>
-                            <a href="{:url('admin/menu/index')}" class="btn btn-secondary">返回</a>
-                        </form>
-                    </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formSubmit">保存</button>
+                                <a href="{:url('admin/menu/index')}" class="layui-btn layui-btn-primary">返回</a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#menu-form').on('submit', function(e) {
-                e.preventDefault();
-                
-                $.ajax({
-                    url: '{:url("admin/menu/save")}',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(res) {
-                        if (res.code === 0) {
-                            alert('菜单添加成功');
+<script>
+    layui.use(['form', 'jquery', 'layer'], function(){
+        var form = layui.form;
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        
+        form.on('submit(formSubmit)', function(data){
+            $.ajax({
+                url: '{:url("admin/menu/save")}',
+                type: 'POST',
+                data: $('#menu-form').serialize(),
+                success: function(res) {
+                    if (res.code === 0) {
+                        layer.msg('菜单添加成功', {icon: 1});
+                        setTimeout(function() {
                             location.href = '{:url("admin/menu/index")}';
-                        } else {
-                            alert('菜单添加失败：' + res.msg);
-                        }
-                    },
-                    error: function() {
-                        alert('菜单添加失败：网络错误');
+                        }, 1000);
+                    } else {
+                        layer.msg('菜单添加失败：' + res.msg, {icon: 2});
                     }
-                });
+                },
+                error: function() {
+                    layer.msg('菜单添加失败：网络错误', {icon: 2});
+                }
             });
+            return false;
         });
-    </script>
-</body>
-</html>
+    });
+</script>
