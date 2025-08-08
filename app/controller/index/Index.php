@@ -11,8 +11,8 @@ class Index extends BaseController
         return view('');
     }
 
-    public function hello($name = 'ThinkPHP8')
+    public function login()
     {
-        return 'hello,' . $name;
+        return view('');
     }
 }

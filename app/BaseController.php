@@ -59,6 +59,8 @@ abstract class BaseController
             'admin.admin/index',   // 登录页面的另一种格式
             'index/index/index',
             'index.index/index',
+            'index/index/login',
+            'index.index/login'
         ];
         
         // 获取当前路由
