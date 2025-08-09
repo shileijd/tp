@@ -1,11 +1,11 @@
- <!-- 左侧菜单 -->
+<!-- 左侧菜单 -->
   <div class="sidebar">
     <ul class="layui-nav layui-nav-tree sidebar-menu" lay-filter="sidebar">
-      <li class="layui-nav-item layui-this">
-        <a href="javascript:;"><i class="layui-icon layui-icon-find-fill"></i>发现</a>
+      <li class="layui-nav-item">
+        <a href="{:url('/index')}"><i class="layui-icon layui-icon-find-fill"></i>发现</a>
       </li>
       <li class="layui-nav-item">
-        <a href="javascript:;"><i class="layui-icon layui-icon-user"></i>会员</a>
+        <a href="{:url('/index/index/profile')}"><i class="layui-icon layui-icon-user"></i>会员</a>
       </li>
       <hr>
       <li class="layui-nav-item">
@@ -48,3 +48,18 @@
       </div>
     </div>
   </div>
+  
+  <script>
+    // 根据当前URL地址设置layui-this类
+    document.addEventListener('DOMContentLoaded', function() {
+      var currentUrl = window.location.pathname;
+      var menuItems = document.querySelectorAll('.sidebar-menu .layui-nav-item');
+      
+      menuItems.forEach(function(item) {
+        var link = item.querySelector('a');
+        if (link && link.getAttribute('href') === currentUrl) {
+          item.classList.add('layui-this');
+        }
+      });
+    });
+  </script>

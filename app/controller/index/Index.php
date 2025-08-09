@@ -133,6 +133,73 @@ class Index extends BaseController
 
     public function forgot()
     {
+        if (request()->isPost()) {
+            $username = request()->param('username');
+            $email = request()->param('email');
+            $code = request()->param('code');
+            $password = request()->param('password');
+            $confirmPassword = request()->param('confirm_password');
+            
+            // 验证必填字段
+            if (empty($username) || empty($email) || empty($code) || empty($password) || empty($confirmPassword)) {
+                return json(['code' => 0, 'msg' => '所有字段都不能为空']);
+            }
+            
+            // 验证密码一致性
+            if ($password !== $confirmPassword) {
+                return json(['code' => 0, 'msg' => '两次输入的密码不一致']);
+            }
+            
+            // 验证邮箱格式
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return json(['code' => 0, 'msg' => '邮箱格式不正确']);
+            }
+            
+            // 验证用户名和邮箱是否对应
+            $user = \think\facade\Db::name('users')->where('username', $username)->where('email', $email)->find();
+            if (!$user) {
+                return json(['code' => 0, 'msg' => '用户名和邮箱不匹配']);
+            }
+            
+            // 验证验证码
+            $sessionCode = session('email_code');
+            $sessionCodeTime = session('email_code_time');
+            
+            // 检查验证码是否存在
+            if (empty($sessionCode)) {
+                return json(['code' => 0, 'msg' => '请先获取验证码']);
+            }
+            
+            // 检查验证码是否过期（5分钟）
+            if (time() - $sessionCodeTime > 300) {
+                return json(['code' => 0, 'msg' => '验证码已过期，请重新获取']);
+            }
+            
+            // 检查验证码是否正确
+            if ($code != $sessionCode) {
+                return json(['code' => 0, 'msg' => '验证码错误']);
+            }
+            
+            // 密码加密
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            
+            // 更新用户密码
+            $result = \think\facade\Db::name('users')->where('id', $user['id'])->update([
+                'password' => $hashedPassword,
+                'update_time' => date('Y-m-d H:i:s')
+            ]);
+            
+            // 清除验证码session
+            session('email_code', null);
+            session('email_code_time', null);
+            
+            if ($result) {
+                return json(['code' => 1, 'msg' => '密码重置成功', 'url' => '/index/index/login']);
+            } else {
+                return json(['code' => 0, 'msg' => '密码重置失败，请重试']);
+            }
+        }
+        
         return view('');
     }
     
@@ -156,8 +223,16 @@ class Index extends BaseController
             return redirect('/index/index/login');
         }
         
-        // 将用户信息传递给视图
-        view()->assign('user', $user);
+        // 获取当前用户详细信息
+        $userInfo = \think\facade\Db::name('users')->where('username', $user)->find();
+        
+        // 获取VIP套餐信息
+        $vipPackages = \think\facade\Db::name('vip_pricing')->where('status', 1)->order('level', 'asc')->select();
+        
+        // 将用户信息和VIP套餐信息传递给视图
+        view::assign('user', $user);
+        view::assign('userInfo', $userInfo);
+        view::assign('vipPackages', $vipPackages);
         
         return view('');
     }
@@ -166,7 +241,13 @@ class Index extends BaseController
     {
         try {
             if (request()->isPost()) {
+                $username = request()->param('username');
                 $email = request()->param('email');
+                
+                // 验证用户名是否为空
+                if (empty($username)) {
+                    return json(['code' => 0, 'msg' => '用户名不能为空']);
+                }
                 
                 // 验证邮箱是否为空
                 if (empty($email)) {
@@ -176,6 +257,12 @@ class Index extends BaseController
                 // 验证邮箱格式
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     return json(['code' => 0, 'msg' => '邮箱格式不正确']);
+                }
+                
+                // 验证用户名和邮箱是否对应
+                $user = \think\facade\Db::name('users')->where('username', $username)->where('email', $email)->find();
+                if (!$user) {
+                    return json(['code' => 0, 'msg' => '用户名和邮箱不匹配']);
                 }
                 
                 // 生成6位随机验证码

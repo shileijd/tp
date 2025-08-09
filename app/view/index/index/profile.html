@@ -1,22 +1,217 @@
-{include file="index/header" /}
 
-<div class="layui-container" style="margin-top: 20px;">
-  <div class="layui-row">
-    <div class="layui-col-md8 layui-col-md-offset2">
-      <div class="layui-card">
-        <div class="layui-card-header">个人中心</div>
-        <div class="layui-card-body">
-          <p>欢迎，{$user}！</p>
-          <p>这里是您的个人中心页面。</p>
+<style>
+  .membership-container {
+    max-width: 1200px;
+    margin-top: 60px;
+    margin-left: 220px;
+    padding: 20px;
+  }
+  .membership-title {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .membership-title h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .membership-title p {
+    font-size: 16px;
+    color: #666;
+  }
+  .user-vip-info {
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .user-vip-info h3 {
+    margin-top: 0;
+    color: #333;
+  }
+  .user-vip-info p {
+    margin: 10px 0;
+    color: #666;
+  }
+  .vip-level {
+    font-weight: bold;
+    color: #ff6699;
+  }
+  .tab-container {
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .membership-card {
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+  }
+  .membership-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+  }
+  .membership-card h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  .price-tag {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff6699;
+    margin-bottom: 10px;
+  }
+  .price-tag span {
+    font-size: 16px;
+    color: #666;
+  }
+  .original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .feature-list {
+    margin-bottom: 25px;
+    flex-grow: 1;
+  }
+  .feature-list li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 20px;
+    color: #666;
+  }
+  .feature-list li:before {
+    content: "✓";
+    color: #5FB878;
+    position: absolute;
+    left: 0;
+  }
+  .new-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f69;
+    color: white;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #f69;
+    color: white;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .order-btn {
+    width: 100%;
+    background-color: #f69;
+    border: none;
+    color: white;
+    padding: 10px 0;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: auto;
+  }
+  .order-btn:hover {
+    background-color: #f69;
+  }
+</style>
+
+<div class="membership-container">
+  <div class="membership-title">
+    <h1>会员中心</h1>
+    <p>选择最适合您的套餐</p>
+  
+
+  <!-- 用户当前VIP信息 -->
+  
+    <p>当前会员等级：
+      
+        <span class="vip-level">{switch $userInfo.vip_level}
+          {case 1}
+            月度会员
+          {/case}
+          {case 2}
+            季度会员
+          {/case}
+          {case 3}
+             年度会员
+          {/case}
+          {default/}
+            注册用户
           
-          <div style="margin-top: 20px;">
-            <a href="/index" class="layui-btn layui-btn-primary">返回首页</a>
-            <a href="/index/index/logout" class="layui-btn layui-btn-danger">退出登录</a>
-          </div>
-        </div>
+        </span>
+      {/switch}
+    会员到期时间：
+      {if $userInfo.vip_expire_time}
+        <span class="vip-level">{$userInfo.vip_expire_time}</span>
+      {else}
+        <span class="vip-level">未开通</span>
+      {/if}
+    剩余积分：<span class="vip-level">{$userInfo.tokens}</span></p>
+  </div>
+
+  <div class="layui-row">
+    {volist name="vipPackages" id="package"}
+    <div class="layui-col-md3" style="margin-right:30px;">
+      <div class="membership-card">    
+        <h3>{$package.level_name}</h3>
+        <div class="price-tag">¥{$package.price} <span>/月</span></div>
+        <ul class="feature-list">
+          <li>每日赠送{$package.token_amount}Tokens</li>
+          {if $package.level == 2 || $package.level == 3} 
+          <li>可创建10秒视频</li>
+          {/if}
+          {if $package.level == 3} 
+          <li>可去除水印</li>
+          <li>无限制使用文字转语音的模型</li>
+          {/if}
+          <li>{$package.description}</li>
+          <li>每日最多可创建{$package.video_limit}个视频</li>
+        </ul>
+        <button class="order-btn">订购套餐</button>
       </div>
     </div>
+    {/volist}
   </div>
+
+  
 </div>
 
-{include file="index/footer" /}
+<script>
+  // 选项卡切换逻辑
+  document.querySelectorAll('.tab-container button').forEach(button => {
+    button.addEventListener('click', function() {
+      // 移除所有按钮的active类
+      document.querySelectorAll('.tab-container button').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.add('layui-btn-primary');
+      });
+      // 为当前按钮添加active类
+      this.classList.add('active');
+      this.classList.remove('layui-btn-primary');
+      // 这里可以添加不同周期套餐的切换逻辑
+      const period = this.getAttribute('data-period');
+      console.log('切换到' + period + '套餐');
+      // 实际应用中，这里可以根据选择的周期更新价格和折扣信息
+    });
+  });
+</script>
+

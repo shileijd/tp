@@ -69,7 +69,7 @@ layui.use(['jquery', 'layer'], function() {
             title: '提示'
         }, function(index) {
             $.ajax({
-                url: '{:url("admin/members/deletePricing")}',
+                url: '{:url("/admin/members/deletePricing")}',
                 type: 'POST',
                 data: {id: id},
                 success: function(res) {
@@ -95,7 +95,7 @@ layui.use(['jquery', 'layer'], function() {
         var status = $(this).data('status');
         
         $.ajax({
-            url: '{:url("admin/members.togglePricingStatus")}',
+            url: '{:url("/admin/members/togglePricingStatus")}',
             type: 'POST',
             data: {id: id},
             success: function(res) {

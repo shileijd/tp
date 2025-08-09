@@ -1,8 +1,8 @@
 <div class="layui-card" style="padding: 20px;">
             <div class="layui-card-header">{if $pricing.id}编辑会员价格{else/}新增会员价格{/if}</div>
             <div class="layui-card-body">
-                <form class="layui-form" action="{:url('admin/members/savePricing')}" method="post" lay-filter="pricingForm">
-                    
+                <form class="layui-form" action="{:url('/admin/members/savePricing')}" method="post" lay-filter="pricingForm">
+                    <input type="hidden" name="id" value="{$pricing.id}">
                     <div class="layui-form-item">
                         <label class="layui-form-label" for="levelName">等级名称</label>
                         <div class="layui-input-block">
@@ -77,7 +77,7 @@ layui.use(['form', 'jquery'], function() {
             success: function(res) {
                 if (res.code == 1) {
                     layer.msg('保存成功', {icon: 1}, function() {
-                        location.href = '{:url("admin/members/pricing")}';
+                        location.href = '{:url("/admin/members/pricing")}';
                     });
                 } else {
                     layer.msg('保存失败：' + res.msg, {icon: 2});

@@ -69,12 +69,20 @@ class Members extends BaseController
         
         // 检查会员等级是否已存在
         $exists = Db::name('vip_pricing')->where('level', $data['level'])->where('id', '<>', isset($data['id']) ? $data['id'] : 0)->find();
-        if ($exists) {
-            return json(['code' => 0, 'msg' => '该会员等级已存在']);
-        }
+        //if ($exists) {
+         //   return json(['code' => 0, 'msg' => '该会员等级已存在']);
+        //}
         
         // 保存数据
         $data['update_time'] = date('Y-m-d H:i:s');
+        
+        // 设置默认值
+        if (!isset($data['status'])) {
+            $data['status'] = 1;
+        }
+        if (!isset($data['sort'])) {
+            $data['sort'] = 0;
+        }
         
         if (isset($data['id']) && !empty($data['id'])) {
             // 更新
@@ -100,7 +108,7 @@ class Members extends BaseController
         if ($id) {
             $pricing = Db::name('vip_pricing')->where('id', $id)->find();
             if (!$pricing) {
-                $this->error('会员价格信息不存在');
+                return json(['code' => 0, 'msg' => '会员价格信息不存在']);
             }
         }
         $pricing['id'] = $id;
