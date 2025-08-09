@@ -60,7 +60,11 @@ abstract class BaseController
             'index/index/index',
             'index.index/index',
             'index/index/login',
-            'index.index/login'
+            'index.index/login',
+            'index.index/register',
+            'index.index/register',
+            'index.index/forgot',
+            'index.index/forgot',
         ];
         
         // 获取当前路由
@@ -91,7 +95,17 @@ abstract class BaseController
      */
     protected function getCurrentUser()
     {
-        return \think\facade\Session::get('admin_user');
+        // 获取当前路由信息
+        $controller = strtolower($this->request->controller());
+        
+        // 根据不同控制器使用不同的session键
+        if (strpos($controller, 'admin') !== false) {
+            // 后台用户使用admin_user作为session键
+            return \think\facade\Session::get('admin_user');
+        } else {
+            // 前台用户使用username作为session键
+            return \think\facade\Session::get('username');
+        }
     }
 
     /**

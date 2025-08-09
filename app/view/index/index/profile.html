@@ -1,0 +1,22 @@
+{include file="index/header" /}
+
+<div class="layui-container" style="margin-top: 20px;">
+  <div class="layui-row">
+    <div class="layui-col-md8 layui-col-md-offset2">
+      <div class="layui-card">
+        <div class="layui-card-header">个人中心</div>
+        <div class="layui-card-body">
+          <p>欢迎，{$user}！</p>
+          <p>这里是您的个人中心页面。</p>
+          
+          <div style="margin-top: 20px;">
+            <a href="/index" class="layui-btn layui-btn-primary">返回首页</a>
+            <a href="/index/index/logout" class="layui-btn layui-btn-danger">退出登录</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{include file="index/footer" /}

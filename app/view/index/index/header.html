@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/css/layui.css">
   <script src="https://cdn.jsdelivr.net/npm/layui@2.6.8/dist/layui.js"></script> 
   <link rel="stylesheet" href="/static/style/index.css">
+  <link rel="stylesheet" href="/static/style/user-menu.css">
 </head>
 <body>
       <!-- 顶部导航栏 -->
@@ -22,7 +23,21 @@
         <div class="theme-switch">
           <i class="layui-icon layui-icon-theme"></i>
         </div>
+        {if $user == null}
         <a href="/index/index/login" class="layui-btn login-btn">登录</a>
+        {else /}
+        <div class="user-menu">
+          <div class="user-info">
+            {:$user}
+            <i class="layui-icon layui-icon-down"></i>
+          </div>
+          <div class="dropdown-menu">
+            <a href="/index/index/profile">个人中心</a>
+            <div class="divider"></div>
+            <a href="/index/index/logout">退出</a>
+          </div>
+        </div>
+        {/if}
       </div>
     </div>
   </div>
