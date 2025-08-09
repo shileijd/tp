@@ -65,6 +65,8 @@ abstract class BaseController
             'index.index/register',
             'index.index/forgot',
             'index.index/forgot',
+            'index.index/sendcode',
+            'index.index/sendcode',
         ];
         
         // 获取当前路由

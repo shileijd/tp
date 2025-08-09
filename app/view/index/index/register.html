@@ -80,6 +80,17 @@
             background: #fafafa;
         }
         
+        .layui-btn-primary {
+            background: #f6f6f6;
+            border-color: #e6e6e6;
+            color: #666;
+        }
+        
+        .layui-btn-primary:hover {
+            background: #eeeeee;
+            border-color: #d2d2d2;
+        }
+        
         .layui-input:focus {
             border-color: #5FB878;
             box-shadow: 0 0 0 2px rgba(95, 184, 120, 0.2);
@@ -170,9 +181,25 @@
                 <div class="input-wrapper">
                     <i class="layui-icon layui-icon-email input-icon"></i>
                     <input type="email" name="email" required lay-verify="email" 
-                           placeholder="请输入邮箱" class="layui-input">
+                           placeholder="请输入邮箱" class="layui-input" id="email">
                 </div>
                 <div class="error-msg" id="email-error"></div>
+            </div>
+            
+            <div class="layui-form-item">
+                <div class="input-wrapper" style="display: flex; gap: 10px;">
+                    <div style="flex: 1; position: relative;">
+                        <i class="layui-icon layui-icon-vercode input-icon"></i>
+                        <input type="text" name="code" required lay-verify="required" 
+                               placeholder="请输入验证码" class="layui-input">
+                    </div>
+                    <div>
+                        <button type="button" class="layui-btn layui-btn-primary" id="send-code" style="height: 50px; border-radius: 8px;">
+                            发送验证码
+                        </button>
+                    </div>
+                </div>
+                <div class="error-msg" id="code-error"></div>
             </div>
             
             <div class="layui-form-item">
@@ -213,6 +240,69 @@
             var form = layui.form;
             var layer = layui.layer;
             
+            // 发送验证码
+            document.getElementById('send-code').addEventListener('click', function(){
+                var email = document.getElementById('email').value;
+                var btn = this;
+                
+                // 简单验证邮箱
+                if(!email) {
+                    layer.msg('请输入邮箱', {icon: 2});
+                    return;
+                }
+                
+                // 验证邮箱格式
+                var emailReg = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if(!emailReg.test(email)) {
+                    layer.msg('邮箱格式不正确', {icon: 2});
+                    return;
+                }
+                
+                // 禁用按钮并显示倒计时
+                btn.disabled = true;
+                var countdown = 60;
+                btn.innerHTML = countdown + '秒后重发';
+                
+                var timer = setInterval(function() {
+                    countdown--;
+                    btn.innerHTML = countdown + '秒后重发';
+                    if(countdown <= 0) {
+                        clearInterval(timer);
+                        btn.disabled = false;
+                        btn.innerHTML = '发送验证码';
+                    }
+                }, 1000);
+                
+                // 发送AJAX请求获取验证码
+                fetch('/index/index/sendCode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({email: email})
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.code === 1) {
+                        layer.msg('验证码已发送', {icon: 1});
+                    } else {
+                        layer.msg(result.msg, {icon: 2});
+                        // 重置按钮
+                        clearInterval(timer);
+                        btn.disabled = false;
+                        btn.innerHTML = '发送验证码';
+                    }
+                })
+                .catch(error => {
+                    layer.msg('网络错误，请重试', {icon: 2});
+                    console.error('Send code error:', error);
+                    // 重置按钮
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.innerHTML = '发送验证码';
+                });
+            });
+            
             // 表单提交
             form.on('submit(registerForm)', function(data){
                 var loadIndex = layer.load(2, {shade: [0.3, '#000']});
@@ -231,7 +321,7 @@
                     }
                     
                     // 发送AJAX请求到后端
-                    fetch('/index/register', {
+                    fetch('/index/index/register', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',

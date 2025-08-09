@@ -3,6 +3,7 @@
 namespace app\controller\index;
 
 use app\BaseController;
+use app\common\service\MailService;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\View;
@@ -61,15 +62,35 @@ class Index extends BaseController
             $email = request()->param('email');
             $password = request()->param('password');
             $confirmPassword = request()->param('confirm_password');
+            $code = request()->param('code');
             
             // 验证必填字段
-            if (empty($username) || empty($email) || empty($password) || empty($confirmPassword)) {
+            if (empty($username) || empty($email) || empty($password) || empty($confirmPassword) || empty($code)) {
                 return json(['code' => 0, 'msg' => '所有字段都不能为空']);
             }
             
             // 验证密码一致性
             if ($password !== $confirmPassword) {
                 return json(['code' => 0, 'msg' => '两次输入的密码不一致']);
+            }
+            
+            // 验证验证码
+            $sessionCode = session('email_code');
+            $sessionCodeTime = session('email_code_time');
+            
+            // 检查验证码是否存在
+            if (empty($sessionCode)) {
+                return json(['code' => 0, 'msg' => '请先获取验证码']);
+            }
+            
+            // 检查验证码是否过期（5分钟）
+            if (time() - $sessionCodeTime > 300) {
+                return json(['code' => 0, 'msg' => '验证码已过期，请重新获取']);
+            }
+            
+            // 检查验证码是否正确
+            if ($code != $sessionCode) {
+                return json(['code' => 0, 'msg' => '验证码错误']);
             }
             
             // 验证用户名是否已存在
@@ -95,6 +116,10 @@ class Index extends BaseController
                 'create_time' => date('Y-m-d H:i:s'),
                 'update_time' => date('Y-m-d H:i:s')
             ]);
+            
+            // 清除验证码session
+            session('email_code', null);
+            session('email_code_time', null);
             
             if ($userId) {
                 return json(['code' => 1, 'msg' => '注册成功', 'url' => '/index/index/login']);
@@ -135,5 +160,49 @@ class Index extends BaseController
         view()->assign('user', $user);
         
         return view('');
+    }
+    
+    public function sendCode()
+    {
+        try {
+            if (request()->isPost()) {
+                $email = request()->param('email');
+                
+                // 验证邮箱是否为空
+                if (empty($email)) {
+                    return json(['code' => 0, 'msg' => '邮箱不能为空']);
+                }
+                
+                // 验证邮箱格式
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    return json(['code' => 0, 'msg' => '邮箱格式不正确']);
+                }
+                
+                // 生成6位随机验证码
+                $code = rand(100000, 999999);
+                
+                // 将验证码保存到session中，设置5分钟过期
+                session('email_code', $code);
+                session('email_code_time', time());
+                
+                // 发送验证码邮件
+                $mailService = new MailService();
+                $subject = '由山竹AI发来的验证码';
+                $content = "您的验证码是：{$code}，5分钟内有效。";
+                $result = $mailService->sendMail($email, $subject, $content);
+                
+                if ($result['status']) {
+                    return json(['code' => 1, 'msg' => '验证码已发送到您的邮箱']);
+                } else {
+                    return json(['code' => 0, 'msg' => '验证码发送失败：' . $result['message']]);
+                }
+            }
+            
+            return json(['code' => 0, 'msg' => '请求方式错误']);
+        } catch (\Exception $e) {
+            // 记录错误日志
+            trace('Send code error: ' . $e->getMessage(), 'error');
+            return json(['code' => 0, 'msg' => '服务器内部错误']);
+        }
     }
 }
