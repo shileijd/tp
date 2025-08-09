@@ -11,11 +11,11 @@ return [
     // 加密方式 ssl/tls
     'encryption' => 'ssl',
     // 邮箱账号
-    'username'   => '自己修改',
+    'username'   => 'shileijd@163.com',
     // 邮箱密码或授权码
-    'password'   => '自己修改',
+    'password'   => 'KVknrE6LCursz9Kr',
     // 发件人名称
-    'from_name'  => '自己修改',
+    'from_name'  => '山竹AI',
     // 发件人邮箱
-    'from_email' => '自己修改',
+    'from_email' => 'shileijd@163.com',
 ];
