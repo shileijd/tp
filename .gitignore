@@ -11,3 +11,9 @@ Thumbs.db
 /.buildpath
 /.project
 config/mail.php
+runtime/
+runtime/logs/
+runtime/runtime/
+runtime/cache/
+runtime/temp/
+
