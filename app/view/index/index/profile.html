@@ -1,14 +1,52 @@
 
 <style>
   .membership-container {
-    max-width: 1200px;
+    width: 90%;
+    max-width: 100%;
     margin-top: 60px;
     margin-left: 220px;
     padding: 20px;
+    box-sizing: border-box;
   }
   .membership-title {
     text-align: center;
     margin-bottom: 30px;
+  }
+  .layui-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .layui-col-md3 {
+    flex: 0 0 calc(25% - 15px);
+    max-width: calc(25% - 15px);
+    margin-bottom: 20px;
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 1200px) {
+    .layui-col-md3 {
+      flex: 0 0 calc(33.333% - 15px);
+      max-width: calc(33.333% - 15px);
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .membership-container {
+      margin-left: 0;
+      padding: 15px;
+    }
+    .layui-col-md3 {
+      flex: 0 0 calc(50% - 15px);
+      max-width: calc(50% - 15px);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .layui-col-md3 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
   }
   .membership-title h2 {
     font-size: 32px;
@@ -138,13 +176,12 @@
   <div class="membership-title">
     <h1>会员中心</h1>
     <p>选择最适合您的套餐</p>
-  
+  </div>
 
-  <!-- 用户当前VIP信息 -->
-  
-    <p>当前会员等级：
-      
-        <span class="vip-level">{switch $userInfo.vip_level}
+  <div class="layui-row">
+    <div class="layui-col-md3">
+      <div class="membership-card">    
+        <h3>{switch $userInfo.vip_level}
           {case 1}
             月度会员
           {/case}
@@ -156,21 +193,30 @@
           {/case}
           {default/}
             注册用户
-          
-        </span>
-      {/switch}
-    会员到期时间：
-      {if $userInfo.vip_expire_time}
-        <span class="vip-level">{$userInfo.vip_expire_time}</span>
-      {else}
-        <span class="vip-level">未开通</span>
-      {/if}
-    剩余积分：<span class="vip-level">{$userInfo.tokens}</span></p>
-  </div>
-
-  <div class="layui-row">
+      {/switch}</h3>
+        <div class="price-tag">会员到期时间：{if $userInfo.vip_expire_time}{$userInfo.vip_expire_time}{else}未开通{/if}</div>
+        <ul class="feature-list">
+          <li>今日剩余：{$userInfo.tokens}Tokens</li>
+          {if $userInfo.vip_level == 2 || $userInfo.vip_level == 3} 
+          <li>可创建10秒视频</li>
+          {/if}
+          {if $userInfo.vip_level == 3} 
+          <li>可去除水印</li>
+          <li>无限制使用文字转语音的模型</li>
+          {/if}
+          <li>{if $userInfo.vip_level >= 1}可创建1080P视频</li>
+          <li>每日最多可创建2个视频</li>
+          {else /}
+          <li>可创建720P视频</li>
+          <li>每日最多可创建1个视频</li>
+          <li>每日最多可进行1次文字转语音</li>
+          {/if}
+        </ul>
+        <button class="order-btn">当前套餐</button>
+      </div>
+    </div>
     {volist name="vipPackages" id="package"}
-    <div class="layui-col-md3" style="margin-right:30px;">
+    <div class="layui-col-md3">
       <div class="membership-card">    
         <h3>{$package.level_name}</h3>
         <div class="price-tag">¥{$package.price} <span>/月</span></div>
