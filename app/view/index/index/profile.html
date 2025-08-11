@@ -94,8 +94,9 @@
     min-height: 400px;
   }
   .membership-card:hover {
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.049);
     transform: translateY(-5px);
+    border: 1px solid #f69;
   }
   .membership-card h3 {
     font-size: 20px;
@@ -105,6 +106,12 @@
   }
   .price-tag {
     font-size: 28px;
+    font-weight: bold;
+    color: #ff6699;
+    margin-bottom: 10px;
+  }
+  .price-tag-1 {
+    font-size: 20px;
     font-weight: bold;
     color: #ff6699;
     margin-bottom: 10px;
@@ -157,7 +164,7 @@
   }
   .order-btn {
     width: 100%;
-    background-color: #f69;
+    background-color: #666;
     border: none;
     color: white;
     padding: 10px 0;
@@ -166,6 +173,19 @@
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: auto;
+  }
+  .order-btn-1 {
+    width: 100%;
+    border: none;
+    color: #666;
+    padding: 10px 0;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: auto;
+    pointer-events: none;
+    border: 1px solid #666;
   }
   .order-btn:hover {
     background-color: #f69;
@@ -194,7 +214,7 @@
           {default/}
             注册用户
       {/switch}</h3>
-        <div class="price-tag">会员到期时间：{if $userInfo.vip_expire_time}{$userInfo.vip_expire_time}{else}未开通{/if}</div>
+        <div class="price-tag-1">会员到期时间：{if $userInfo.vip_expire_time}{$userInfo.vip_expire_time}{else}未开通{/if}</div>
         <ul class="feature-list">
           <li>今日剩余：{$userInfo.tokens}Tokens</li>
           {if $userInfo.vip_level == 2 || $userInfo.vip_level == 3} 
@@ -212,7 +232,7 @@
           <li>每日最多可进行1次文字转语音</li>
           {/if}
         </ul>
-        <button class="order-btn">当前套餐</button>
+        <button class="order-btn-1" disabled>当前套餐</button>
       </div>
     </div>
     {volist name="vipPackages" id="package"}
